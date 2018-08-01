@@ -50,7 +50,7 @@ public class TestThreadServiceImpl implements TestThreadService, ApplicationList
     int i = 0;
 
     @Override
-    public void addUser(User user) {
+    public synchronized void addUser(User user) {
         try {
             Thread.sleep(10000);
             System.out.println(user.toString());
