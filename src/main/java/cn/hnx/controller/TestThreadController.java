@@ -26,8 +26,7 @@ public class TestThreadController {
 
     @RequestMapping("/fetchUser")
     public List<User> fetchUser(){
-        List<User> list = new ArrayList<>();
-        list = testThreadService.fetchUser();
+        List<User> list = testThreadService.fetchUser();
         return list;
     }
 
