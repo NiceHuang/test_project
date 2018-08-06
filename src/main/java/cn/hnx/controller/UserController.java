@@ -4,12 +4,15 @@ import cn.hnx.common.bean.DataPortralUser;
 import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.ResultMessageBuilder;
 import cn.hnx.service.impl.DataPortralUserServiceImpl;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,11 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultMessage login(@RequestBody() DataPortralUser user){
         DataPortralUser dbUser = dataPortralUserService.fetchUserByEmail(user.getEmail());
-        return ResultMessageBuilder.build(user);
+        String token = Jwts.builder().setSubject(dbUser.getUsername()).claim("roles", "admin")
+                .setIssuedAt(new Date()).signWith(SignatureAlgorithm.HS256, "secretkey").compact();
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", token);
+        return ResultMessageBuilder.build(map);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
