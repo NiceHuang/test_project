@@ -10,7 +10,9 @@ public enum ResponseMessage {
     SERVER_ERROR(-2, "未知异常"),
     PARAM_NEED_ERROR(-101, "请求参数缺失"),
     PARAM_FORMAT_ERROR(-102, "请求参数格式错误"),
-    AUTH_FAILED(-103, "鉴权失败");
+    PERMISSION_DENIED(-100, "没有权限"),
+    INVALID_PASSWORD(-102, "用户名或密码错误"),
+    INVALID_TOKEN(-104, "token无效");
 
     private int code;
     private String message;
