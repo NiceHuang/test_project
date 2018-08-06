@@ -3,6 +3,7 @@ package cn.hnx.controller;
 import cn.hnx.common.bean.DataPortralUser;
 import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.ResultMessageBuilder;
+import cn.hnx.common.utils.TokenUtil;
 import cn.hnx.service.impl.DataPortralUserServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,8 +36,7 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultMessage login(@RequestBody() DataPortralUser user){
         DataPortralUser dbUser = dataPortralUserService.fetchUserByEmail(user.getEmail());
-        String token = Jwts.builder().setSubject(dbUser.getUsername()).claim("roles", "admin")
-                .setIssuedAt(new Date()).signWith(SignatureAlgorithm.HS256, "secretkey").compact();
+        String token = TokenUtil.createTokenForUser(dbUser);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
         return ResultMessageBuilder.build(map);

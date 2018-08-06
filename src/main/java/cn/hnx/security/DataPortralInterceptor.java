@@ -26,7 +26,7 @@ public class DataPortralInterceptor extends WebMvcConfigurerAdapter {
         registry.addInterceptor(getDataPortralInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/login")
-                .excludePathPatterns("register")
+                .excludePathPatterns("/register")
                 .excludePathPatterns("/error");
     }
 }
