@@ -13,7 +13,7 @@ import java.util.HashMap;
  * Created by viruser on 2018/8/7.
  */
 
-@ControllerAdvice(basePackages={"cn.hnx"})
+@ControllerAdvice
 @ResponseBody
 public class GlobalExceptionHandler {
 

@@ -42,7 +42,6 @@ public class UserController {
         if (dbUser == null || !dbUser.getPassword().equals(user.getPassword())){
             return ResultMessageBuilder.build(ResponseMessage.INVALID_PASSWORD.getCode(), ResponseMessage.INVALID_PASSWORD.getMessage());
         }
-
         String token = TokenUtil.createTokenForUser(dbUser);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
