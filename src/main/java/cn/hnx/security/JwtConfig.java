@@ -15,7 +15,7 @@ public class JwtConfig {
     public FilterRegistrationBean jwtFilter(){
         final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new TokenAuthorFilter());
-        registrationBean.addUrlPatterns("/server/*");
+        registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }
 }

@@ -3,14 +3,9 @@ package cn.hnx.security;
 import cn.hnx.common.utils.ResponseMessage;
 import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.TokenUtil;
-import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -19,9 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * Created by viruser on 2018/8/6.
@@ -44,7 +37,12 @@ public class TokenAuthorFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         if ("OPTIONS".equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
-
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        if ("/login".equals(request.getRequestURI()) ||
+                "/register".equals(request.getRequestURI()) ||
+                "/error".equals(request.getRequestURI())){
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }

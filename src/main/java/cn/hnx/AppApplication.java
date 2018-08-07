@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * Created by hnx on 2018/7/30.
  */
-@EnableCaching
 @SpringBootApplication
 @ComponentScan(basePackages={"cn.hnx"})
 public class AppApplication {

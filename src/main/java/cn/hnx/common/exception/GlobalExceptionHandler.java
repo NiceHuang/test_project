@@ -13,12 +13,12 @@ import java.util.HashMap;
  * Created by viruser on 2018/8/7.
  */
 
-@ControllerAdvice
+@ControllerAdvice(basePackages={"cn.hnx"})
 @ResponseBody
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResultMessage defaultErrorHandler(Exception e){
+    @ExceptionHandler(RuntimeException.class)
+    public ResultMessage defaultErrorHandler(RuntimeException e){
 
         ResultMessage message = new ResultMessage();
         message.setStatus(ResponseMessage.SERVER_ERROR.getCode());
