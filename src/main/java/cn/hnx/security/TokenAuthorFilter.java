@@ -59,8 +59,8 @@ public class TokenAuthorFilter implements Filter {
         response.setCharacterEncoding("utf8");
         PrintWriter printWriter = response.getWriter();
         ResultMessage message = new ResultMessage();
-        message.setStatus(ResponseMessage.INVALID_TOKEN.getCode());
-        message.setMessage(ResponseMessage.INVALID_TOKEN.getMessage());
+        message.setStatus(ResponseMessage.PERMISSION_DENIED.getCode());
+        message.setMessage(ResponseMessage.PERMISSION_DENIED.getMessage());
         message.setData(new HashMap<>());
         printWriter.print(message.toString());
         printWriter.flush();
