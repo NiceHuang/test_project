@@ -4,6 +4,7 @@ import cn.hnx.common.utils.ResponseMessage;
 import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.TokenUtil;
 import com.alibaba.fastjson.JSON;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -39,37 +42,31 @@ public class TokenAuthorFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request  = (HttpServletRequest)  servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        try {
-            Optional<Authentication> authentication = TokenUtil.verifyToken(request);
-            if (authentication.isPresent()) {
-                SecurityContextHolder.getContext().setAuthentication(authentication.get());
-            }
-            else{
-                SecurityContextHolder.getContext().setAuthentication(null);
-            }
-            filterChain.doFilter(servletRequest, servletResponse);
-        }catch (JwtException e) {
-            logger.error("token验证失败："+e.getMessage());
-            responseErrorInfo(response,e.getMessage());
-        }catch (Exception e) {
-            logger.error("token验证失败："+e.getMessage());
-            responseErrorInfo(response,e.getMessage());
-        }finally {
-            SecurityContextHolder.getContext().setAuthentication(null);
-        }
-    }
+        if ("OPTIONS".equals(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
 
-    private void responseErrorInfo(HttpServletResponse response,String message){
-        try {
-            response.setHeader( "Content-type" , MediaType.APPLICATION_JSON_UTF8_VALUE );
-            response.setCharacterEncoding( StandardCharsets.UTF_8.displayName() );
-            ResultMessage resultMessage = new ResultMessage();
-            resultMessage.setStatus(ResponseMessage.INVALID_TOKEN.getCode());
-            resultMessage.setMessage(ResponseMessage.INVALID_TOKEN.getMessage());
-            response.getWriter().print(JSON.toJSONString(resultMessage));
-        } catch (IOException e) {
-            e.printStackTrace();
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
         }
+        Claims claims = TokenUtil.verifyToken(request);
+        if (claims == null){
+            responseMessage(response);
+            return;
+        }
+        request.setAttribute("claims", claims);
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+    private void responseMessage(HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf8");
+        PrintWriter printWriter = response.getWriter();
+        ResultMessage message = new ResultMessage();
+        message.setStatus(ResponseMessage.INVALID_TOKEN.getCode());
+        message.setMessage(ResponseMessage.INVALID_TOKEN.getMessage());
+        message.setData(new HashMap<>());
+        printWriter.print(message.toString());
+        printWriter.flush();
+        printWriter.close();
     }
 
     @Override

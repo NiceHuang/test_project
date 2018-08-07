@@ -12,6 +12,10 @@ public class ResultMessageBuilder {
         return new ResultMessage(data);
     }
 
+    public static ResultMessage build(int status, String message){
+        return new ResultMessage(status, message, null);
+    }
+
     public static ResultMessage build(int status, String message, Object data){
         return new ResultMessage(status, message, data);
     }

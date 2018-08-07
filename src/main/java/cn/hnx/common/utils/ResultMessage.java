@@ -1,6 +1,8 @@
 package cn.hnx.common.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * Created by viruser on 2018/8/6.
@@ -8,8 +10,10 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class ResultMessage {
 
+    private static final SerializerFeature[] JSON_SERIALIZER_FEATURE =
+            new SerializerFeature[]{SerializerFeature.DisableCircularReferenceDetect};
     @JSONField(ordinal=1)
-    private int status;
+    private Integer status;
     @JSONField(ordinal=2)
     private String message;
     @JSONField(ordinal=3)
@@ -54,5 +58,10 @@ public class ResultMessage {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this, JSON_SERIALIZER_FEATURE);
     }
 }

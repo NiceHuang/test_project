@@ -5,6 +5,7 @@ import cn.hnx.common.bean.UserAuthentication;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,30 +16,17 @@ import java.util.Optional;
 public class TokenUtil {
     private static final long VALIDITY_TIME_MS = 2 * 60 * 60 * 1000;
     private static final String AUTH_HEADER_NAME = "Authorization";
-    private static String secret = "mrin";
+    private static String secret = "data_portral";
 
 
-    public static Optional<Authentication> verifyToken(HttpServletRequest request){
-        final String token = request.getHeader(AUTH_HEADER_NAME);
-        if (token != null && !token.isEmpty()){
-            final DataPortralUser user = parseUserFromToken(token.replace("Bearer","").trim());
-            return Optional.of(new UserAuthentication(user));
+    public static Claims verifyToken(HttpServletRequest request){
+        String token = request.getHeader(AUTH_HEADER_NAME);
+        if (token == null && StringUtils.isEmpty(token)){
+            return null;
         }
-        return Optional.empty();
-    }
-
-    /**
-     * 根据token获取user信息
-     * @param token
-     * @return
-     */
-    public static DataPortralUser parseUserFromToken(String token){
+        token = token.replace("Bearer","").trim();
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-
-        int id = (int) claims.get("userId");
-        DataPortralUser user = new DataPortralUser();
-        user.setId(id);
-        return user;
+        return claims;
     }
     /**
      * 生成token

@@ -1,12 +1,14 @@
 package cn.hnx.controller;
 
 import cn.hnx.common.bean.DataPortralUser;
+import cn.hnx.common.utils.ResponseMessage;
 import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.ResultMessageBuilder;
 import cn.hnx.common.utils.TokenUtil;
 import cn.hnx.service.impl.DataPortralUserServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +29,7 @@ public class UserController {
     @Autowired
     private DataPortralUserServiceImpl dataPortralUserService;
 
-    @RequestMapping(value = "/fetchUser")
+    @RequestMapping(value = "/server/fetchUser")
     public ResultMessage fetchUser(){
         Map<String, Object> params = new HashMap<>();
         List<DataPortralUser> list = dataPortralUserService.fetchUser(params);
@@ -35,7 +37,14 @@ public class UserController {
     }
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultMessage login(@RequestBody() DataPortralUser user){
+        if (user == null || StringUtils.isEmpty(user.getEmail()) || StringUtils.isEmpty(user.getPassword())){
+            return ResultMessageBuilder.build(ResponseMessage.INVALID_PASSWORD.getCode(), ResponseMessage.INVALID_PASSWORD.getMessage());
+        }
         DataPortralUser dbUser = dataPortralUserService.fetchUserByEmail(user.getEmail());
+        if (dbUser == null || !dbUser.getPassword().equals(user.getPassword())){
+            return ResultMessageBuilder.build(ResponseMessage.INVALID_PASSWORD.getCode(), ResponseMessage.INVALID_PASSWORD.getMessage());
+        }
+
         String token = TokenUtil.createTokenForUser(dbUser);
         Map<String, Object> map = new HashMap<>();
         map.put("token", token);
