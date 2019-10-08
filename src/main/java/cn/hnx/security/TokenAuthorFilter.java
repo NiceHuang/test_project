@@ -42,7 +42,8 @@ public class TokenAuthorFilter implements Filter {
         }
         if ("/login".equals(request.getRequestURI()) ||
                 "/register".equals(request.getRequestURI()) ||
-                "/error".equals(request.getRequestURI())){
+                "/error".equals(request.getRequestURI()) ||
+                request.getRequestURI().contains("redis")){
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }

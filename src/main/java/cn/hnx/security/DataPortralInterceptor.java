@@ -23,10 +23,13 @@ public class DataPortralInterceptor extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(getDataPortralInterceptor())
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/login")
+//                .excludePathPatterns("/register")
+//                .excludePathPatterns("/error")
+//                .excludePathPatterns("/redis");
         registry.addInterceptor(getDataPortralInterceptor())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/login")
-                .excludePathPatterns("/register")
-                .excludePathPatterns("/error");
+                .excludePathPatterns("/**");
     }
 }

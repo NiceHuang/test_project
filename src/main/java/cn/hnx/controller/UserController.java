@@ -6,8 +6,13 @@ import cn.hnx.common.utils.ResultMessage;
 import cn.hnx.common.utils.ResultMessageBuilder;
 import cn.hnx.common.utils.TokenUtil;
 import cn.hnx.service.impl.DataPortralUserServiceImpl;
+import cn.hnx.service.redis.DistributedLockUtil;
+import cn.hnx.service.redis.IDistributedLock;
+import cn.hnx.service.redis.RedisLock;
+import cn.hnx.service.redis.TestThread;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +30,9 @@ public class UserController {
 
     @Autowired
     private DataPortralUserServiceImpl dataPortralUserService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @RequestMapping(value = "/fetchUser")
     public ResultMessage fetchUser(){
@@ -51,6 +59,21 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResultMessage register(@RequestBody() DataPortralUser user){
         dataPortralUserService.addDataPortralUser(user);
+        return ResultMessageBuilder.build();
+    }
+
+
+    @RequestMapping(value = "/redis")
+    public ResultMessage redis(){
+        RedisLock lock = new RedisLock();
+        lock.setRedisTemplate(redisTemplate);
+//        lock.acquire();
+        Thread thread1 = new Thread(new TestThread("线程1", redisTemplate));
+        Thread thread2 = new Thread(new TestThread("线程2", redisTemplate));
+
+        thread1.start();
+
+        thread2.start();
         return ResultMessageBuilder.build();
     }
 }
